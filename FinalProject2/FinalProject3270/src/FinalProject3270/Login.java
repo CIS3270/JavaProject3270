@@ -86,16 +86,27 @@ public class Login extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// action if the login button is clicked
+			try {
 			if (e.getSource() == login) {
 				String credentialsUser = user.getText();
 				String credentialsPwd = pwd.getText();
 				// to check if the user name and password are valid from the
 				// user input
-				try {
+				
 					// passes user credentials to connectDb method to verify
 					// that is matches up
 					boolean valid = Database.connectDb(credentialsUser,
 							credentialsPwd);
+					if(valid){
+						User object = Database.createUser( credentialsUser);
+						AccountGUI start = new AccountGUI(object.account);
+						start.setSize(400,400);
+						start.setDefaultCloseOperation(EXIT_ON_CLOSE);
+						start.setVisible(true);
+						start.setLocationRelativeTo(null);
+						setVisible(false);
+						
+					}
 					// if it matches up then proceed to the user account
 					// if not then notify the user invalid password/userid
 					// combination
@@ -106,12 +117,22 @@ public class Login extends JFrame {
 					}/** Needs to transition the user to the account menu from here  */
 					
 					//invalid password result
-					else{
 				
 					/** Need to add result for when the user enters invalid information  */
-					}
+					
 				
-				} catch (ClassNotFoundException t) {
+				}else if(e.getSource() == register) {
+					
+					System.out.println("******************");
+					setVisible(false);
+					Register reg = new Register();
+					reg.setVisible(true);
+					setSize(600,750);
+					setLocationRelativeTo(null);
+					
+				}
+			
+			}catch (ClassNotFoundException t) {
 				} catch (SQLException g) {
 				} catch(NullPointerException n){
 					JOptionPane.showMessageDialog(login, "Yea thats not gona Fly."
@@ -120,7 +141,7 @@ public class Login extends JFrame {
 				}
 				}
 			}
-		}
+		
 	
 
 	public static void main(String[] args) {

@@ -43,7 +43,7 @@ public class Splash {
 		bar.setStringPainted(true);
 		// add a image to the panel
 		top.add(new JLabel(new ImageIcon(
-				("/Users/tremaynegraham/Desktop/joker.jpg"))));
+				("/Users/tremaynegraham/Desktop/funny.jpg"))));
 		// add a label
 		bottom.add(new JLabel("Welcome"));
 		// add the progress bar

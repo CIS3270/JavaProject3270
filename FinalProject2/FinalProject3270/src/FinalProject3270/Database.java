@@ -19,6 +19,8 @@ public class Database {
 	public static boolean connectDb(String user, String pwd)
 			throws ClassNotFoundException, SQLException {
 		// load the driver from the jar file
+		boolean valid = false;
+		
 		Class.forName("com.mysql.jdbc.Driver");
 		System.out.println("Driver Loaded");
 
@@ -29,7 +31,7 @@ public class Database {
 		System.out.println(connection);
 		// prepare query that will access information in the database
 		PreparedStatement statement2 = connection
-				.prepareStatement("select username, password from USERS ");
+				.prepareStatement("select username, password from user ");
 		ResultSet result = statement2.executeQuery();
 
 		// arrays to store the userIDs and Passwords
@@ -51,10 +53,10 @@ public class Database {
 		if (found >= 0) {
 			if (pwds.get(found).equals(pwd)) {
 				System.out.println("This password looks good to me let em in");
-				return true;
+				valid= true;
 			}
 		}
-		return false;
+		return valid;
 	}
 
 	/*
@@ -90,7 +92,7 @@ public class Database {
 		System.out.println(connect);
 		
 		// prepare a query to access the information in database using the PreparedStatement class
-		String query ="SELECT Airline,FlightNumber, Destination, DepartureCity,Capacity, DepartureDate, ArrivalDate FROM Flights WHERE airline = '"+flight+"'";
+		String query ="SELECT airline,flight_num, dest_city, depart_city,capacity, depart_date, arrival_date FROM flight WHERE airline = '"+flight+"'";
 		PreparedStatement statement = connect.prepareStatement(query);
 		
 		// now to execute the statement, PreparedStatement, and store the results using a object from the ResultSet class
@@ -108,7 +110,44 @@ public class Database {
 		return list;
 	}
 	//return selected information from the combo box
+	//this method adds a new user to the database
 	
+		public static void addUser(User user) throws SQLException, ClassNotFoundException{
+			Class.forName("com.mysql.jdbc.Driver");
+			
+			Connection connect = DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/Project", "root", "root");
+			String insert = "INSERT into user(SSN,user_id,first_name,last_name,email,username,password,address,zip,state,security_question,security_answer )"
+					+ "values (" + user.ssn +","+user.userId+", '"+user.firstName+"','"+ user.lastName +"' , '"+  user.email+"' , '"+ user.userName+"' , '"+ user.password+ "', '"+ user.address +"', "+ user.zipCode+", '" + user.state+"', '" + user.securityQuestion +"', '"+user.securityAnswer+"' )";
+					
+			System.out.println(insert);
+		PreparedStatement statement = connect.prepareStatement(insert);
+			statement.executeUpdate();
+			
+		}	
+		public static User createUser(String username) throws SQLException{
+			User user = new User();
+			Connection connect = DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/Project", "root", "root");
+			
+			System.out.println(connect);
+			
+			// prepare a query to access the information in database using the PreparedStatement class
+			String query ="SELECT SSN,user_id,first_name,last_name,email,username,password,address,zip,state,security_question,security_answer FROM user WHERE username  = '"+username+"'";
+			PreparedStatement statement = connect.prepareStatement(query);
+			
+			// now to execute the statement, PreparedStatement, and store the results using a object from the ResultSet class
+			ResultSet result = statement.executeQuery();
+			
+			//now pull the results to build a Flight object
+			// and add the object to the list
+			while(result.next()){
+				 user = new User(result.getInt(1), result.getInt(2),result.getString(3), result.getString(4),result.getString(5),result.getString(6),result.getString(7),result.getString(8), result.getInt(9),result.getString(10),result.getString(11),result.getString(12) );
+				
+			
+			}
+			return user;
+		}
 
 public static void main(String[]args) throws ClassNotFoundException, SQLException{
 	ArrayList<Flight> trial = new ArrayList<Flight>();
@@ -118,6 +157,13 @@ public static void main(String[]args) throws ClassNotFoundException, SQLExceptio
 	for(Flight f: trial){
 		System.out.println(f);
 	}
+	Database me = new Database();
 	
+	
+	
+	
+	User user = me.createUser("CuriousG");
+	System.out.println(user.toString());
 }
+
 }

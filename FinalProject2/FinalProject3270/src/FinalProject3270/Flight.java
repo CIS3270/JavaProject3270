@@ -53,11 +53,11 @@ public class Flight {
 	}
 
 	/*
-	 * Search for a Flight with the given a flightNumber
+	 * 
 	 */
 	public String toString() {
 		return "FLIGHT NUMBER:"+flightNumber+" \nAIRLINE:"+airlineName+" \nDEPARTURE:"+ departureCity +
-				" \nARRIVAL:"+destinationCity+" \nDATE:"+departureDate+" \nCAPACITY:"
+				" \nARRIVAL:"+destinationCity+" \nFLIGHT DATE:"+departureDate+" \nCAPACITY:"
 				+ capacity+ " REMAINING SEATS:"+getRemainingSeats();
 	}
 	//returns a array of flights that closets match the search options given by the user
@@ -66,8 +66,22 @@ public class Flight {
 		ArrayList<Flight> filtered = new ArrayList<Flight>();
 		// search through the array for particular flight information
 		for(Flight i: flights ){
-			
+			//
 				if((i.departureCity.equals(departure))&&(i.destinationCity.equals(arrival))){
+					// if they both match then add it to the new array
+					filtered.add(i);
+				}
+		}
+		return filtered;
+	}
+	//returns a array with one city as the search criteria
+	public static ArrayList<Flight> search(ArrayList<Flight> flights,String departure){
+		//sort through the array to match the departure and arrival cities and puts it in a new array
+		ArrayList<Flight> filtered = new ArrayList<Flight>();
+		// search through the array for particular flight information
+		for(Flight i: flights ){
+			//
+				if((i.departureCity.equals(departure))){
 					// if they both match then add it to the new array
 					filtered.add(i);
 				}

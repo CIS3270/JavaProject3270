@@ -28,12 +28,13 @@ public class FlightSearch extends JFrame {
 	JComboBox<String> airlines;
 	JComboBox<String> cityD;
 	JComboBox<String> cityA;
-
+	Account account;
 	// construct the GUI for user interaction
-	FlightSearch(String name) {
+	FlightSearch(String name,Account account) {
 		// give the panel a name call the super class which is JFrame
 		super(name);
-
+		//need the account object to transfer to call the account GUI of the user
+		this.account = account;
 		// Build two panels for organization upper and lower
 		JPanel upper = new JPanel();
 		JPanel lower = new JPanel();
@@ -57,6 +58,7 @@ public class FlightSearch extends JFrame {
 		JLabel cityDepart = new JLabel("Depart: ");
 
 		cityA = new JComboBox<String>();
+		cityA.addItem("...");
 		
 		JLabel cityArrival = new JLabel("Arrival: ");
 
@@ -85,7 +87,7 @@ public class FlightSearch extends JFrame {
 		 * as a particular type of date object in java. UtilDateModel returns
 		 * the date as type Java.Util.Date The JDatePanelImpl builds the GUI
 		 * that displays the calendar The JDatePickerImpl pops the GUI up and
-		 * down and stores the data selected by tehe user
+		 * down and stores the data selected by the user
 		 */
 		// declare JDatePickerImpl and declare and create the data model,
 		// models specify the type of object the time will be stores as
@@ -127,8 +129,11 @@ public class FlightSearch extends JFrame {
 		 */
 		Action action = new Action();
 		search.addActionListener(action);
+		home.addActionListener(action);
 		// combo box action listener
 		airlines.addActionListener(action);
+		cityA.addActionListener(action);
+		cityD.addActionListener(action);
 		// set the visibility size and location
 		
 		setSize(900, 600);
@@ -150,8 +155,13 @@ public class FlightSearch extends JFrame {
 				String cityarrive = (String) cityA.getSelectedItem();
 				
 				try {
-					BookFlight flight = new BookFlight(selected, citydepart, cityarrive);
+					if(cityarrive.equals("...")){
+						BookFlight flight = new BookFlight(selected, citydepart,account);
+						setVisible(false);
+					}else{
+					BookFlight flight = new BookFlight(selected, citydepart, cityarrive,account);
 					setVisible(false);
+					}
 				} catch (ClassNotFoundException e1) {
 					//  Auto-generated catch block
 					e1.printStackTrace();
@@ -162,31 +172,27 @@ public class FlightSearch extends JFrame {
 				
 			//if the home button is clicked return the user to the main account screen
 			}else if(e.getSource()==home){
-				
-				
+				try{
+				AccountGUI panel = new AccountGUI(account);
+				}
+				catch(NullPointerException t){
+					
+				}
 			}else if(e.getSource() == airlines ){
 				// add the cities that this particular flight travels to 
 				String selected = (String) airlines.getSelectedItem();
 				// switch statement switches the combo box values based on the airline selected	
 				switch(selected){
 					//these are the cities that a particular airline flies out from	
-					case "Delta": cityD.addItem("Atlanta"); 
+					case "Delta": 
 					//remove all clears the previous combo box values.
 					//add item gives it values according to that particular airline
 					cityD.removeAllItems();
 					cityD.addItem("...");
 					cityD.addItem("Miami");
-					cityD.addItem("San Francisco");
-					cityD.addItem("Houston");
-					cityD.addItem("New York");
+					cityD.addItem("Charlotte");
 					cityD.addItem("Atlanta");
 					//arrival cities
-					cityA.removeAllItems();
-					cityA.addItem("...");
-					cityA.addItem("Miami");
-					cityA.addItem("Charlotte");
-					
-					
 					break;
 					case "Spirit": 
 						cityD.removeAllItems();
@@ -197,12 +203,45 @@ public class FlightSearch extends JFrame {
 						cityD.addItem("New Orleans");
 				}
 			}
+			if(e.getSource()==cityD){
+				String cityASel= (String)cityD.getSelectedItem();
+				switch(cityASel){
+				case "Charlotte":
+					cityA.removeAllItems();
+					cityA.addItem("...");
+					cityA.addItem("New Orleans");
+					cityA.addItem("Atlanta");
+					cityA.addItem("Chicago");
+					break;
+				case "Miami":
+					cityA.removeAllItems();
+					cityA.addItem("...");
+					cityA.addItem("Atlanta");
+					cityA.addItem("Houston");
+					cityA.addItem("Detroit");
+					break;
+				case "Atlanta":
+					cityA.removeAllItems();
+					cityA.addItem("...");
+					cityA.addItem("Tampa");
+					cityA.addItem("New York");
+					cityA.addItem("Los Angeles");
+					break;
+				}
+			}
 		}
 	}
 
 	public static void main(String[] args) {
 		Flight[] flights = new Flight[3];
-		FlightSearch search = new FlightSearch("Flight List");
+		Account acct = new Account();
+		Date now = new Date();
+		Date after = new Date();
+		Flight mia = new Flight("Delta",123,"Atlanta","Miami",50,now,after);
+		acct.addFlight(mia);
+
+		FlightSearch sear = new FlightSearch("Looking",acct);
+		//FlightSearch search = new FlightSearch("Flight List");
 		
 	}
 
